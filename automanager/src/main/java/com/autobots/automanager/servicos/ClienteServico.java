@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -49,7 +50,7 @@ public class ClienteServico {
         cliente.setNome(dto.nome());
         cliente.setNomeSocial(dto.nomeSocial());
         cliente.setDataNascimento(dto.dataNascimento());
-        cliente.setDataCadastro(dto.dataCadastro());
+        cliente.setDataCadastro(LocalDateTime.now());
 
         if (dto.endereco() != null) {
             Endereco endereco = new Endereco();

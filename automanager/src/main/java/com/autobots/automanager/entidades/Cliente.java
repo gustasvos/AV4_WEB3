@@ -1,5 +1,6 @@
 package com.autobots.automanager.entidades;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +38,7 @@ public class Cliente extends RepresentationModel<Cliente>{
 	private Date dataNascimento;
 
 	@Column
-	private Date dataCadastro;
+	private LocalDateTime dataCadastro;
 
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Documento> documentos = new ArrayList<>();

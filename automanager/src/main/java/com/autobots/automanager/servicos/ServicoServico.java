@@ -60,6 +60,15 @@ public class ServicoServico {
     public ResponseEntity<Servico> atualizarServico(long id, ServicoDTO dto) {
         return repositorio.findById(id)
                 .map(servico -> {
+                    if (dto.nome() != null && !dto.nome().isBlank() ) {
+                        servico.setNome(dto.nome());
+                    }
+                    if (dto.valor() != null) {
+                        servico.setValor(dto.valor());
+                    }
+                    if (dto.descricao() != null && !dto.descricao().isBlank() ) {
+                        servico.setDescricao(dto.descricao());
+                    }
                     atualizador.atualizar(servico, dto);
                     Servico salvo = repositorio.save(servico);
                     adicionadorLinkServico.adicionarLink(salvo);

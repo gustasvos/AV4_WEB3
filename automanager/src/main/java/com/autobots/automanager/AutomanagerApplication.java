@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.autobots.automanager.repositorios.EmpresaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -24,7 +25,6 @@ import com.autobots.automanager.entidades.Venda;
 import com.autobots.automanager.enumeracoes.PerfilUsuario;
 import com.autobots.automanager.enumeracoes.TipoDocumento;
 import com.autobots.automanager.enumeracoes.TipoVeiculo;
-import com.autobots.automanager.repositorios.RepositorioEmpresa;
 import org.springframework.stereotype.Component;
 
 @SpringBootApplication
@@ -38,7 +38,7 @@ public class AutomanagerApplication {
 	public static class Runner implements ApplicationRunner {
 
 		@Autowired
-		private RepositorioEmpresa repositorioEmpresa;
+		private EmpresaRepositorio empresaRepositorio;
 
 		@Override
 		public void run(ApplicationArguments args) throws Exception {
@@ -46,7 +46,7 @@ public class AutomanagerApplication {
 			Empresa empresa = new Empresa();
 			empresa.setRazaoSocial("Car service toyota ltda");
 			empresa.setNomeFantasia("Car service manutenção veicular");
-			empresa.setCadastro(new Date());
+			empresa.setDataCadastro(LocalDateTime.now());
 
 			Endereco enderecoEmpresa = new Endereco();
 			enderecoEmpresa.setEstado("São Paulo");
@@ -219,7 +219,7 @@ public class AutomanagerApplication {
 			empresa.getServicos().add(alinhamento);
 
 			Venda venda = new Venda();
-			venda.setCadastro(new Date());
+			venda.setDataCadastro(LocalDateTime.now());
 			venda.setCliente(cliente);
 			venda.getMercadorias().add(rodaLigaLeve);
 			venda.setIdentificacao("1234698745");
@@ -231,7 +231,7 @@ public class AutomanagerApplication {
 
 			empresa.getVendas().add(venda);
 
-			repositorioEmpresa.save(empresa);
+			empresaRepositorio.save(empresa);
 
 			Mercadoria rodaLigaLeve2 = new Mercadoria();
 			rodaLigaLeve2.setDataCadastro(LocalDate.now());
@@ -253,7 +253,7 @@ public class AutomanagerApplication {
 			balanceamento.setValor(30.0);
 
 			Venda venda2 = new Venda();
-			venda2.setCadastro(new Date());
+			venda2.setDataCadastro(LocalDateTime.now());
 			venda2.setCliente(cliente);
 			venda2.getMercadorias().add(rodaLigaLeve2);
 			venda2.setIdentificacao("1234698749");
@@ -265,7 +265,7 @@ public class AutomanagerApplication {
 
 			empresa.getVendas().add(venda2);
 
-			repositorioEmpresa.save(empresa);
+			empresaRepositorio.save(empresa);
 		}
 
 	}
