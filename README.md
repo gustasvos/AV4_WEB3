@@ -1,4 +1,4 @@
-# AV1 - Desenvolvimento Web III Fatec SJC
+# AV3 - Desenvolvimento Web III Fatec SJC
 
 **Requisitos: Java 17.** 
 
@@ -15,9 +15,10 @@ Os dados serão salvos no banco em memória H2.
 
 ## Endpoints
 
-A aplicação possui 4 entidades: Cliente, Documento, Endereço e Telefone.
+A aplicação possui as entidades: Cliente, Documento, Endereço e Telefone, Empresa, Email, Mercadoria, Servico, 
+Usuario, Veiculo, Venda, Credencial, CredencialCodigoBarra e CredencialUsuarioSenha.
 
-Cada entidade possui os seguintes endpoints para as ações CRUD, seguindo os níveis de maturidade RMM (Richardson Maturity Model), principalmente na aplicação de HATEOAS.
+Cada entidade possui os endpoints para as ações CRUD, seguindo os níveis de maturidade RMM (Richardson Maturity Model), principalmente na aplicação de HATEOAS.
 
 Exemplo para as rotas do Cliente:
 

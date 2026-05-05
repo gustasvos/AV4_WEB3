@@ -1,4 +1,4 @@
-package com.autobots.automanager.modelos;
+package com.autobots.automanager.modelos.adicionador;
 
 import com.autobots.automanager.controles.TelefoneControle;
 import com.autobots.automanager.entidades.Telefone;

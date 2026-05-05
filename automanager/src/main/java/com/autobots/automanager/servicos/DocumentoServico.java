@@ -1,13 +1,14 @@
 package com.autobots.automanager.servicos;
 
 import com.autobots.automanager.controles.DocumentoControle;
+import com.autobots.automanager.dto.DocumentoDTO;
 import com.autobots.automanager.entidades.Documento;
-import com.autobots.automanager.entidades.Documento;
-import com.autobots.automanager.modelos.AdicionadorLinkDocumento;
-import com.autobots.automanager.modelos.DocumentoAtualizador;
+import com.autobots.automanager.modelos.adicionador.AdicionadorLinkDocumento;
+import com.autobots.automanager.modelos.atualizador.DocumentoAtualizador;
 import com.autobots.automanager.repositorios.DocumentoRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,13 @@ import java.util.List;
 
 @Service
 public class DocumentoServico {
+
     @Autowired
     private DocumentoRepositorio repositorio;
     @Autowired
-    AdicionadorLinkDocumento adicionadorLinkDocumento;
+    private AdicionadorLinkDocumento adicionadorLinkDocumento;
+    @Autowired
+    private DocumentoAtualizador atualizador;
 
     public ResponseEntity<Documento> obterDocumento(long id) {
         return repositorio.findById(id)
@@ -36,8 +40,15 @@ public class DocumentoServico {
         return ResponseEntity.ok(documentos);
     }
 
-    public ResponseEntity<Documento> cadastrarDocumento(Documento documento) {
-        documento.setId(null);
+    public ResponseEntity<Documento> cadastrarDocumento(DocumentoDTO dto) {
+        if (repositorio.existsByNumero(dto.numero())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        Documento documento = new Documento();
+        documento.setTipo(dto.tipo());
+        documento.setDataEmissao(dto.dataEmissao());
+        documento.setNumero(dto.numero());
+
         Documento salvo = repositorio.save(documento);
         adicionadorLinkDocumento.adicionarLink(salvo);
 
@@ -50,10 +61,10 @@ public class DocumentoServico {
         return ResponseEntity.created(location).body(salvo);
     }
 
-    public ResponseEntity<Documento> atualizarDocumento(long id, Documento atualizacao) {
+    public ResponseEntity<Documento> atualizarDocumento(long id, DocumentoDTO dto) {
         return repositorio.findById(id)
                 .map(documento -> {
-                    new DocumentoAtualizador().atualizar(documento, atualizacao);
+                    atualizador.atualizar(documento, dto);
                     Documento salvo = repositorio.save(documento);
                     adicionadorLinkDocumento.adicionarLink(salvo);
                     return ResponseEntity.ok(salvo);

@@ -1,9 +1,10 @@
 package com.autobots.automanager.servicos;
 
 import com.autobots.automanager.controles.TelefoneControle;
+import com.autobots.automanager.dto.TelefoneDTO;
 import com.autobots.automanager.entidades.Telefone;
-import com.autobots.automanager.modelos.AdicionadorLinkTelefone;
-import com.autobots.automanager.modelos.TelefoneAtualizador;
+import com.autobots.automanager.modelos.adicionador.AdicionadorLinkTelefone;
+import com.autobots.automanager.modelos.atualizador.TelefoneAtualizador;
 import com.autobots.automanager.repositorios.TelefoneRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -15,10 +16,13 @@ import java.util.List;
 
 @Service
 public class TelefoneServico {
+
     @Autowired
     private TelefoneRepositorio repositorio;
     @Autowired
     private AdicionadorLinkTelefone adicionadorLinkTelefone;
+    @Autowired
+    private TelefoneAtualizador atualizador;
 
     public ResponseEntity<Telefone> obterTelefone(long id) {
         return repositorio.findById(id)
@@ -35,8 +39,11 @@ public class TelefoneServico {
         return ResponseEntity.ok(telefones);
     }
 
-    public ResponseEntity<Telefone> cadastrarTelefone(Telefone telefone) {
-        telefone.setId(null);
+    public ResponseEntity<Telefone> cadastrarTelefone(TelefoneDTO dto) {
+        Telefone telefone = new Telefone();
+        telefone.setDdd(dto.ddd());
+        telefone.setNumero(dto.numero());
+
         Telefone salvo = repositorio.save(telefone);
         adicionadorLinkTelefone.adicionarLink(salvo);
 
@@ -49,10 +56,10 @@ public class TelefoneServico {
         return ResponseEntity.created(location).body(salvo);
     }
 
-    public ResponseEntity<Telefone> atualizarTelefone(long id, Telefone atualizacao) {
+    public ResponseEntity<Telefone> atualizarTelefone(long id, TelefoneDTO dto) {
         return repositorio.findById(id)
                 .map(telefone -> {
-                    new TelefoneAtualizador().atualizar(telefone, atualizacao);
+                    atualizador.atualizar(telefone, dto);
                     Telefone salvo = repositorio.save(telefone);
                     adicionadorLinkTelefone.adicionarLink(salvo);
                     return ResponseEntity.ok(salvo);

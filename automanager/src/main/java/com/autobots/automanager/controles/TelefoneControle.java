@@ -1,11 +1,15 @@
 package com.autobots.automanager.controles;
 
 import java.util.List;
+
+import com.autobots.automanager.dto.TelefoneDTO;
 import com.autobots.automanager.entidades.Telefone;
 import com.autobots.automanager.servicos.TelefoneServico;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/telefones")
@@ -27,14 +31,14 @@ public class TelefoneControle {
     }
 
     @PostMapping
-    public ResponseEntity<Telefone> cadastrarTelefone(@RequestBody Telefone telefone) {
-        return servico.cadastrarTelefone(telefone);
+    public ResponseEntity<Telefone> cadastrarTelefone(@RequestBody @Valid TelefoneDTO dto) {
+        return servico.cadastrarTelefone(dto);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Telefone> atualizarTelefone(
             @PathVariable long id,
-            @RequestBody Telefone atualizacao) {
-        return servico.atualizarTelefone(id, atualizacao);
+            @RequestBody @Valid TelefoneDTO dto) {
+        return servico.atualizarTelefone(id, dto);
     }
 }
