@@ -22,11 +22,13 @@ public class EmpresaControle {
     @GetMapping("/{id}")
     public ResponseEntity<Empresa> obterEmpresa(@PathVariable long id) {
         return servico.obterEmpresa(id);
+//
     }
 
     @GetMapping
     public ResponseEntity<List<Empresa>> obterEmpresas() {
         return servico.obterEmpresas();
+//        
     }
 
     @PostMapping

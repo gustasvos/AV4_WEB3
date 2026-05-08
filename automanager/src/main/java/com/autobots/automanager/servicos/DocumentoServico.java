@@ -32,12 +32,14 @@ public class DocumentoServico {
                     return ResponseEntity.ok(documento);
                 })
                 .orElse(ResponseEntity.notFound().build());
+//
     }
 
     public ResponseEntity<List<Documento>> obterDocumentos() {
         List<Documento> documentos = repositorio.findAll();
         adicionadorLinkDocumento.adicionarLink(documentos);
         return ResponseEntity.ok(documentos);
+//        
     }
 
     public ResponseEntity<Documento> cadastrarDocumento(DocumentoDTO dto) {

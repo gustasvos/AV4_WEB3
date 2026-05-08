@@ -1,10 +1,7 @@
 package com.autobots.automanager.servicos;
 
 import com.autobots.automanager.controles.VendaControle;
-import com.autobots.automanager.dto.MercadoriaDTO;
-import com.autobots.automanager.dto.ServicoDTO;
-import com.autobots.automanager.dto.request.VendaRequestDTO;
-import com.autobots.automanager.dto.response.VendaResponseDTO;
+import com.autobots.automanager.dto.VendaDTO;
 import com.autobots.automanager.entidades.Mercadoria;
 import com.autobots.automanager.entidades.Servico;
 import com.autobots.automanager.entidades.Venda;
@@ -45,15 +42,17 @@ public class VendaServico {
                     return ResponseEntity.ok(venda);
                 })
                 .orElse(ResponseEntity.notFound().build());
+//
     }
 
     public ResponseEntity<List<Venda>> obterVendas() {
         List<Venda> vendas = repositorio.findAll();
         adicionadorLink.adicionarLink(vendas);
         return ResponseEntity.ok(vendas);
+//        
     }
 
-    public ResponseEntity<Venda> cadastrarVenda(VendaRequestDTO dto) {
+    public ResponseEntity<Venda> cadastrarVenda(VendaDTO dto) {
         Venda venda = new Venda();
         venda.setIdentificacao(dto.identificacao());
         venda.setDataCadastro(LocalDateTime.now());
@@ -95,7 +94,7 @@ public class VendaServico {
         return ResponseEntity.created(location).body(salvo);
     }
 
-    public ResponseEntity<Venda> atualizarVenda(long id, VendaRequestDTO dto) {
+    public ResponseEntity<Venda> atualizarVenda(long id, VendaDTO dto) {
         return repositorio.findById(id)
                 .map(venda -> {
                     if (dto.identificacao() != null && !dto.identificacao().isBlank()) {
@@ -130,21 +129,4 @@ public class VendaServico {
                 .orElseGet(() -> ResponseEntity.<Void>notFound().build());
     }
 
-    private VendaResponseDTO toResponseDTO(Venda venda) {
-        return new VendaResponseDTO(
-                venda.getId(),
-                venda.getIdentificacao(),
-                venda.getDataCadastro(),
-                venda.getCliente() != null ? venda.getCliente().getId() : null,
-                venda.getFuncionario() != null ? venda.getFuncionario().getId() : null,
-                venda.getVeiculo() != null ? venda.getVeiculo().getId() : null,
-                venda.getMercadorias().stream()
-                        .map(m -> new MercadoriaDTO(m.getId(), m.getDataValidade(), m.getDataFabricacao(),
-                                m.getNome(), m.getQuantidade(), m.getValor(), m.getDescricao()))
-                        .collect(Collectors.toSet()),
-                venda.getServicos().stream()
-                        .map(s -> new ServicoDTO(s.getId(), s.getNome(), s.getValor(), s.getDescricao()))
-                        .collect(Collectors.toSet())
-        );
-    }
 }

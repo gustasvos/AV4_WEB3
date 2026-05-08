@@ -1,7 +1,7 @@
 package com.autobots.automanager.controles;
 
-import com.autobots.automanager.dto.request.VeiculoRequestDTO;
-import com.autobots.automanager.dto.response.VeiculoResponseDTO;
+import com.autobots.automanager.dto.VeiculoDTO;
+import com.autobots.automanager.entidades.Veiculo;
 import com.autobots.automanager.servicos.VeiculoServico;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,24 +18,26 @@ public class VeiculoControle {
     private VeiculoServico servico;
 
     @GetMapping("/{id}")
-    public ResponseEntity<VeiculoResponseDTO> obterVeiculo(@PathVariable long id) {
+    public ResponseEntity<Veiculo> obterVeiculo(@PathVariable long id) {
         return servico.obterVeiculo(id);
+//
     }
 
     @GetMapping
-    public ResponseEntity<List<VeiculoResponseDTO>> obterVeiculos() {
+    public ResponseEntity<List<Veiculo>> obterVeiculos() {
         return servico.obterVeiculos();
+//        
     }
 
     @PostMapping
-    public ResponseEntity<VeiculoResponseDTO> cadastrarVeiculo(@RequestBody @Valid VeiculoRequestDTO dto) {
+    public ResponseEntity<Veiculo> cadastrarVeiculo(@RequestBody @Valid VeiculoDTO dto) {
         return servico.cadastrarVeiculo(dto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VeiculoResponseDTO> atualizarVeiculo(
+    public ResponseEntity<Veiculo> atualizarVeiculo(
             @PathVariable long id,
-            @RequestBody @Valid VeiculoRequestDTO dto) {
+            @RequestBody @Valid VeiculoDTO dto) {
         return servico.atualizarVeiculo(id, dto);
     }
 

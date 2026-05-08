@@ -20,6 +20,11 @@ Usuario, Veiculo, Venda, Credencial, CredencialCodigoBarra e CredencialUsuarioSe
 
 Cada entidade possui os endpoints para as ações CRUD, seguindo os níveis de maturidade RMM (Richardson Maturity Model), principalmente na aplicação de HATEOAS.
 
+Essa versão possui os endpoints para credenciais de usuários, que podem ser acessadas como sub-rotas de usuarios:
+
+- `GET /usuarios` ou `GET /usuarios/{id}`: Para ver os dados do usuario, incluindo o nomeUsuario da credencial
+- `POST /usuarios/{id}`: Para cadastrar uma credencial
+
 Exemplo para as rotas do Cliente:
 
 - `POST /clientes`: Cria a entidade
@@ -29,6 +34,15 @@ Exemplo para as rotas do Cliente:
 - `DELETE /clientes/{id}`: Remove a entidade do id passado (Apenas para a entidade Cliente)
 
 ## Exemplos de Requisições
+
+`POST /usuarios/{id}/credenciais`
+
+```json
+{
+  "nomeUsuario": "dompedrocliente00",
+  "senha": "1234561"
+}
+```
 
 `POST /clientes:`
 

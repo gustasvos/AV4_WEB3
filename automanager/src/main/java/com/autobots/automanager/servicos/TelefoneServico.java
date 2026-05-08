@@ -31,12 +31,14 @@ public class TelefoneServico {
                     return ResponseEntity.ok(telefone);
                 })
                 .orElse(ResponseEntity.notFound().build());
+//
     }
 
     public ResponseEntity<List<Telefone>> obterTelefones() {
         List<Telefone> telefones = repositorio.findAll();
         adicionadorLinkTelefone.adicionarLink(telefones);
         return ResponseEntity.ok(telefones);
+//        
     }
 
     public ResponseEntity<Telefone> cadastrarTelefone(TelefoneDTO dto) {

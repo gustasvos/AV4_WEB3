@@ -1,8 +1,7 @@
 package com.autobots.automanager.servicos;
 
 import com.autobots.automanager.controles.VeiculoControle;
-import com.autobots.automanager.dto.request.VeiculoRequestDTO;
-import com.autobots.automanager.dto.response.VeiculoResponseDTO;
+import com.autobots.automanager.dto.VeiculoDTO;
 import com.autobots.automanager.entidades.Veiculo;
 import com.autobots.automanager.modelos.adicionador.AdicionadorLinkVeiculo;
 import com.autobots.automanager.modelos.atualizador.VeiculoAtualizador;
@@ -28,22 +27,24 @@ public class VeiculoServico {
     @Autowired
     private VeiculoAtualizador atualizador;
 
-    public ResponseEntity<VeiculoResponseDTO> obterVeiculo(long id) {
+    public ResponseEntity<Veiculo> obterVeiculo(long id) {
         return repositorio.findById(id)
                 .map(veiculo -> {
                     adicionadorLink.adicionarLink(veiculo);
-                    return ResponseEntity.ok(toResponseDTO(veiculo));
+                    return ResponseEntity.ok(veiculo);
                 })
                 .orElse(ResponseEntity.notFound().build());
+//
     }
 
-    public ResponseEntity<List<VeiculoResponseDTO>> obterVeiculos() {
+    public ResponseEntity<List<Veiculo>> obterVeiculos() {
         List<Veiculo> veiculos = repositorio.findAll();
         adicionadorLink.adicionarLink(veiculos);
-        return ResponseEntity.ok(veiculos.stream().map(this::toResponseDTO).toList());
+        return ResponseEntity.ok(veiculos);
+//        
     }
 
-    public ResponseEntity<VeiculoResponseDTO> cadastrarVeiculo(VeiculoRequestDTO dto) {
+    public ResponseEntity<Veiculo> cadastrarVeiculo(VeiculoDTO dto) {
         Veiculo veiculo = new Veiculo();
         veiculo.setTipo(dto.tipo());
         veiculo.setModelo(dto.modelo());
@@ -63,22 +64,20 @@ public class VeiculoServico {
                         .obterVeiculo(salvo.getId()))
                 .toUri();
 
-        return ResponseEntity.created(location).body(toResponseDTO(salvo));
+        return ResponseEntity.created(location).body(salvo);
     }
 
-    public ResponseEntity<VeiculoResponseDTO> atualizarVeiculo(long id, VeiculoRequestDTO dto) {
+    public ResponseEntity<Veiculo> atualizarVeiculo(long id, VeiculoDTO dto) {
         return repositorio.findById(id)
                 .map(veiculo -> {
                     atualizador.atualizar(veiculo, dto);
-
                     if (dto.proprietarioId() != null) {
                         usuarioRepositorio.findById(dto.proprietarioId())
                                 .ifPresent(veiculo::setProprietario);
                     }
-
                     Veiculo salvo = repositorio.save(veiculo);
                     adicionadorLink.adicionarLink(salvo);
-                    return ResponseEntity.ok(toResponseDTO(salvo));
+                    return ResponseEntity.ok(salvo);
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -92,13 +91,13 @@ public class VeiculoServico {
                 .orElseGet(() -> ResponseEntity.<Void>notFound().build());
     }
 
-    private VeiculoResponseDTO toResponseDTO(Veiculo veiculo) {
-        return new VeiculoResponseDTO(
-                veiculo.getId(),
-                veiculo.getTipo(),
-                veiculo.getModelo(),
-                veiculo.getPlaca(),
-                veiculo.getProprietario() != null ? veiculo.getProprietario().getId() : null
-        );
-    }
+//    private VeiculoResponseDTO toResponseDTO(Veiculo veiculo) {
+//        return new VeiculoResponseDTO(
+//                veiculo.getId(),
+//                veiculo.getTipo(),
+//                veiculo.getModelo(),
+//                veiculo.getPlaca(),
+//                veiculo.getProprietario() != null ? veiculo.getProprietario().getId() : null
+//        );
+//    }
 }

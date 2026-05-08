@@ -21,13 +21,15 @@ public class UsuarioControle {
     private UsuarioServico servico;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> obterUsuario(@PathVariable long id) {
+    public ResponseEntity<Usuario> obterUsuario(@PathVariable long id) {
         return servico.obterUsuario(id);
+//
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioResponseDTO>> obterUsuarios() {
+    public ResponseEntity<List<Usuario>> obterUsuarios() {
         return servico.obterUsuarios();
+//
     }
 
     @PostMapping
@@ -47,7 +49,7 @@ public class UsuarioControle {
         return servico.excluirUsuario(id);
     }
 
-    // sub-rotas credenciais
+    // credenciais
     @PostMapping("/{id}/credenciais")
     public ResponseEntity<UsuarioResponseDTO> adicionarCredencial(
             @PathVariable long id,
@@ -70,7 +72,7 @@ public class UsuarioControle {
         return servico.excluirCredencial(id, credencialId);
     }
 
-    // sub-rotas emails
+    // emails
     @PostMapping("/{id}/emails")
     public ResponseEntity<UsuarioResponseDTO> adicionarEmail(
             @PathVariable long id,
@@ -85,7 +87,7 @@ public class UsuarioControle {
         return servico.excluirEmail(id, emailId);
     }
 
-    // sub-rotas telefones
+    // telefones
     @PostMapping("/{id}/telefones")
     public ResponseEntity<UsuarioResponseDTO> adicionarTelefone(
             @PathVariable long id,
@@ -100,7 +102,7 @@ public class UsuarioControle {
         return servico.excluirTelefone(id, telefoneId);
     }
 
-    // sub-rotas documentos
+    // documentos
     @PostMapping("/{id}/documentos")
     public ResponseEntity<UsuarioResponseDTO> adicionarDocumento(
             @PathVariable long id,

@@ -36,22 +36,21 @@ public class UsuarioServico {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    public ResponseEntity<UsuarioResponseDTO> obterUsuario(long id) {
+    public ResponseEntity<Usuario> obterUsuario(long id) {
         return repositorio.findById(id)
                 .map(usuario -> {
                     adicionadorLink.adicionarLink(usuario);
-                    return ResponseEntity.ok(toResponseDTO(usuario));
+                    return ResponseEntity.ok(usuario);
                 })
                 .orElse(ResponseEntity.notFound().build());
+//
     }
 
-    public ResponseEntity<List<UsuarioResponseDTO>> obterUsuarios() {
+    public ResponseEntity<List<Usuario>> obterUsuarios() {
         List<Usuario> usuarios = repositorio.findAll();
         adicionadorLink.adicionarLink(usuarios);
-        List<UsuarioResponseDTO> dtos = usuarios.stream()
-                .map(this::toResponseDTO)
-                .toList();
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(usuarios);
+//        
     }
 
     public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(UsuarioRequestDTO dto) {
@@ -233,7 +232,7 @@ public class UsuarioServico {
     }
 
     private UsuarioResponseDTO toResponseDTO(Usuario usuario) {
-        return new UsuarioResponseDTO(
+        UsuarioResponseDTO dto = new UsuarioResponseDTO(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getNomeSocial(),
@@ -270,5 +269,19 @@ public class UsuarioServico {
                         })
                         .collect(Collectors.toSet())
         );
+
+        dto.add(WebMvcLinkBuilder
+                .linkTo(WebMvcLinkBuilder
+                        .methodOn(UsuarioControle.class)
+                        .obterUsuario(usuario.getId()))
+                .withSelfRel());
+
+        dto.add(WebMvcLinkBuilder
+                .linkTo(WebMvcLinkBuilder
+                        .methodOn(UsuarioControle.class)
+                        .obterUsuarios())
+                .withRel("usuarios"));
+
+        return dto;
     }
 }

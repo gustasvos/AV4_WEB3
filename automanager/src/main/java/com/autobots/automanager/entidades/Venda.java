@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
@@ -23,6 +24,7 @@ import org.springframework.hateoas.RepresentationModel;
 @Data
 @EqualsAndHashCode(exclude = { "cliente", "funcionario", "veiculo" })
 @Entity
+@JsonPropertyOrder({ "id", "dataCadastro", "identificacao", "cliente", "funcionario", "mercadorias", "servicos", "veiculo", "links" })
 public class Venda extends RepresentationModel<Venda> {
 
 	@Id

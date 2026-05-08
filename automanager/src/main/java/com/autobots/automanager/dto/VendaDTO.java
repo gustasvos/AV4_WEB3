@@ -1,15 +1,10 @@
-package com.autobots.automanager.dto.request;
+package com.autobots.automanager.dto;
 
-import com.autobots.automanager.dto.MercadoriaDTO;
-import com.autobots.automanager.dto.ServicoDTO;
-
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.Set;
 
-public record VendaRequestDTO(
+public record VendaDTO(
         Long id,
 
         @NotBlank(message = "Identificação é obrigatória")

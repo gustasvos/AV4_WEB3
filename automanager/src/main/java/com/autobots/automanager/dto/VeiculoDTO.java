@@ -1,11 +1,11 @@
-package com.autobots.automanager.dto.request;
+package com.autobots.automanager.dto;
 
 import com.autobots.automanager.enumeracoes.TipoVeiculo;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public record VeiculoRequestDTO(
+public record VeiculoDTO(
         Long id,
 
         @NotNull(message = "Tipo é obrigatório")

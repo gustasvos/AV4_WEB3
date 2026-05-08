@@ -37,12 +37,14 @@ public class ClienteServico {
                     return ResponseEntity.ok(cliente);
                 })
                 .orElse(ResponseEntity.notFound().build());
+//
     }
 
     public ResponseEntity<List<Cliente>> obterClientes() {
         List<Cliente> clientes = repositorio.findAll();
         adicionadorLink.adicionarLink(clientes);
         return ResponseEntity.ok(clientes);
+//        
     }
 
     public ResponseEntity<Cliente> cadastrarCliente(ClienteDTO dto) {

@@ -31,12 +31,14 @@ public class ServicoServico {
                     return ResponseEntity.ok(servico);
                 })
                 .orElse(ResponseEntity.notFound().build());
+//
     }
 
     public ResponseEntity<List<Servico>> obterServicos() {
         List<Servico> servicos = repositorio.findAll();
         adicionadorLinkServico.adicionarLink(servicos);
         return ResponseEntity.ok(servicos);
+//        
     }
 
     public ResponseEntity<Servico> cadastrarServico(ServicoDTO dto) {

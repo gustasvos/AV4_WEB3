@@ -47,12 +47,14 @@ public class EmpresaServico {
                     return ResponseEntity.ok(empresa);
                 })
                 .orElse(ResponseEntity.notFound().build());
+//
     }
 
     public ResponseEntity<List<Empresa>> obterEmpresas() {
         List<Empresa> empresas = repositorio.findAll();
         adicionadorLink.adicionarLink(empresas);
         return ResponseEntity.ok(empresas);
+//        
     }
 
     public ResponseEntity<Empresa> cadastrarEmpresa(EmpresaDTO dto) {

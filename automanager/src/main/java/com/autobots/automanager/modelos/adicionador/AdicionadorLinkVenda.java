@@ -16,6 +16,10 @@ public class AdicionadorLinkVenda implements AdicionadorLink<Venda> {
     private AdicionadorLinkMercadoria adicionadorLinkMercadoria;
     @Autowired
     private AdicionadorLinkServico adicionadorLinkServico;
+    @Autowired
+    private AdicionadorLinkVeiculo adicionadorLinkVeiculo;
+    @Autowired
+    private AdicionadorLinkUsuario adicionadorLinkUsuario;
 
     @Override
     public void adicionarLink(Venda objeto) {
@@ -62,5 +66,6 @@ public class AdicionadorLinkVenda implements AdicionadorLink<Venda> {
         if (objeto.getServicos() != null) {
             adicionadorLinkServico.adicionarLink(objeto.getServicos());
         }
+
     }
 }
