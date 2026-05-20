@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.autobots.automanager.enumeracoes.PerfilAcesso;
 import com.autobots.automanager.enumeracoes.PerfilUsuario;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,6 +38,9 @@ public class Usuario extends RepresentationModel<Usuario> {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<PerfilUsuario> perfis = new HashSet<>();
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	private Set<PerfilAcesso> perfisAcesso = new HashSet<>();
 
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Telefone> telefones = new HashSet<>();

@@ -284,4 +284,8 @@ public class UsuarioServico {
 
         return dto;
     }
+
+    private Usuario obterPorNome(String nomeUsuario) {
+        return repositorio.findByNomeUsuario(nomeUsuario).orElse(null);
+    }
 }

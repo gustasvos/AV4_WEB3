@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.autobots.automanager.dto.LoginDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,31 +28,28 @@ public class Autenticador extends UsernamePasswordAuthenticationFilter {
 	public Autenticador(AuthenticationManager gerenciadorAutenticacao, ProvedorJwt provedorJwt) {
 		this.gerenciadorAutenticacao = gerenciadorAutenticacao;
 		this.provedorJwt = provedorJwt;
+		setFilterProcessesUrl("/login");
 	}
 
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
-		Credencial credencial = null;
+		LoginDTO login;
 		try {
-			credencial = new ObjectMapper().readValue(request.getInputStream(), Credencial.class);
+			login = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
 		} catch (IOException e) {
-			credencial = new Credencial();
-			credencial.setNomeUsuario("");
-			credencial.setSenha("");
+			login = new LoginDTO("", "");
 		}
 		UsernamePasswordAuthenticationToken dadosAutenticacao = new UsernamePasswordAuthenticationToken(
-				credencial.getNomeUsuario(), credencial.getSenha(), new ArrayList<>());
-		Authentication autenticacao = gerenciadorAutenticacao.authenticate(dadosAutenticacao);
-		return autenticacao;
+				login.nomeUsuario(), login.senha(), new ArrayList<>());
+		return gerenciadorAutenticacao.authenticate(dadosAutenticacao);
 	}
 
 	@Override
-	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-			Authentication autenticacao) throws IOException, ServletException {
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+											FilterChain chain, Authentication autenticacao) throws IOException, ServletException {
 		UserDetails usuario = (UserDetails) autenticacao.getPrincipal();
-		String nomeUsuario = usuario.getUsername();
-		String jwt = provedorJwt.proverJwt(nomeUsuario);
+		String jwt = provedorJwt.proverJwt(usuario.getUsername());
 		response.addHeader("Authorization", "Bearer " + jwt);
 	}
 }

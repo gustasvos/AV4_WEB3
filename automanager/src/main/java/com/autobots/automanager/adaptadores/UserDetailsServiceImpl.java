@@ -2,6 +2,8 @@ package com.autobots.automanager.adaptadores;
 
 import java.util.List;
 
+import com.autobots.automanager.entidades.CredencialUsuarioSenha;
+import com.autobots.automanager.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,27 +17,24 @@ import com.autobots.automanager.repositorios.RepositorioUsuario;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
-	private RepositorioUsuario repositorio;
+	private UsuarioRepositorio repositorio;
 
 	private Usuario obterPorNome(String nomeUsuario) {
-		List<Usuario> usuarios = repositorio.findAll();
-		Usuario selecionado = null;
-		for (Usuario usuario : usuarios) {
-			if (usuario.getCredencial().getNomeUsuario().equals(nomeUsuario)) {
-				selecionado = usuario;
-				break;
-			}
-		}
-		return selecionado;
+		return repositorio.findAll().stream()
+				.filter(usuario -> usuario.getCredenciais().stream()
+						.filter(c -> c instanceof CredencialUsuarioSenha)
+						.map(c -> ((CredencialUsuarioSenha) c).getNomeUsuario())
+						.anyMatch(nome -> nome.equals(nomeUsuario)))
+				.findFirst()
+				.orElse(null);
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario selecionado = this.obterPorNome(username);
+		Usuario selecionado = obterPorNome(username);
 		if (selecionado == null) {
 			throw new UsernameNotFoundException(username);
 		}
-		UserDetailsImpl usuario = new UserDetailsImpl(selecionado);
-		return usuario;
+		return new UserDetailsImpl(selecionado);
 	}
 }

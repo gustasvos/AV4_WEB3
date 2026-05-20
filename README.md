@@ -1,4 +1,4 @@
-# AV3 - Desenvolvimento Web III Fatec SJC
+# AV4 - Desenvolvimento Web III Fatec SJC
 
 **Requisitos: Java 17.** 
 
@@ -11,7 +11,11 @@
 
 Estará disponível em `http://localhost:8080/`.
 
-Os dados serão salvos no banco em memória H2.
+Os dados serão salvos temporariamente no banco em memória H2.
+
+## Nova implementação da versão 4 - JWT
+
+Foi implementado um login que gera um token JWT e atualmente os endpoints possuem níveis de acesso, portanto é necessário gerar um token e passar via Bearer Token para utilizar a API.
 
 ## Endpoints
 
@@ -20,7 +24,11 @@ Usuario, Veiculo, Venda, Credencial, CredencialCodigoBarra e CredencialUsuarioSe
 
 Cada entidade possui os endpoints para as ações CRUD, seguindo os níveis de maturidade RMM (Richardson Maturity Model), principalmente na aplicação de HATEOAS.
 
-Essa versão possui os endpoints para credenciais de usuários, que podem ser acessadas como sub-rotas de usuarios:
+Endpoint para o login:
+
+- `POST /login`: Para gerar um token de acesso para uma das roles.
+
+Endpoints para credenciais de usuários, que podem ser acessadas como sub-rotas de usuarios:
 
 - `GET /usuarios` ou `GET /usuarios/{id}`: Para ver os dados do usuario, incluindo o nomeUsuario da credencial
 - `POST /usuarios/{id}`: Para cadastrar uma credencial
@@ -34,6 +42,15 @@ Exemplo para as rotas do Cliente:
 - `DELETE /clientes/{id}`: Remove a entidade do id passado (Apenas para a entidade Cliente)
 
 ## Exemplos de Requisições
+
+`POST /login`
+
+```json
+{
+  "nomeUsuario": "admin",
+  "senha": "123456"
+}
+```
 
 `POST /usuarios/{id}/credenciais`
 

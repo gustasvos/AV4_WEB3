@@ -1,31 +1,16 @@
 package com.autobots.automanager;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
-import com.autobots.automanager.repositorios.EmpresaRepositorio;
+import com.autobots.automanager.entidades.*;
+import com.autobots.automanager.enumeracoes.PerfilAcesso;
+import com.autobots.automanager.repositorios.RepositorioUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.autobots.automanager.entidades.CredencialUsuarioSenha;
-import com.autobots.automanager.entidades.Documento;
-import com.autobots.automanager.entidades.Email;
-import com.autobots.automanager.entidades.Empresa;
-import com.autobots.automanager.entidades.Endereco;
-import com.autobots.automanager.entidades.Mercadoria;
-import com.autobots.automanager.entidades.Servico;
-import com.autobots.automanager.entidades.Telefone;
-import com.autobots.automanager.entidades.Usuario;
-import com.autobots.automanager.entidades.Veiculo;
-import com.autobots.automanager.entidades.Venda;
-import com.autobots.automanager.enumeracoes.PerfilUsuario;
-import com.autobots.automanager.enumeracoes.TipoDocumento;
-import com.autobots.automanager.enumeracoes.TipoVeiculo;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class AutomanagerApplication implements CommandLineRunner {
@@ -276,12 +261,15 @@ public class AutomanagerApplication implements CommandLineRunner {
 		BCryptPasswordEncoder codificador = new BCryptPasswordEncoder();
 		Usuario usuario = new Usuario();
 		usuario.setNome("administrador");
-		usuario.getPerfis().add(Perfil.ROLE_ADMIN);
-		Credencial credencial = new Credencial();
+		usuario.getPerfisAcesso().add(PerfilAcesso.ROLE_ADMIN);
+
+		CredencialUsuarioSenha credencial = new CredencialUsuarioSenha();
 		credencial.setNomeUsuario("admin");
-		String senha  = "123456";
-		credencial.setSenha(codificador.encode(senha));
-		usuario.setCredencial(credencial);
+		credencial.setSenha(codificador.encode("123456"));
+		credencial.setCriacao(LocalDateTime.now());
+		credencial.setInativo(false);
+
+		usuario.getCredenciais().add(credencial);
 		repositorio.save(usuario);
 	}
 }

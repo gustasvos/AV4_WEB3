@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.autobots.automanager.entidades.CredencialUsuarioSenha;
+import com.autobots.automanager.enumeracoes.PerfilAcesso;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.autobots.automanager.entidades.Usuario;
-import com.autobots.automanager.modelos.Perfil;
 
 @SuppressWarnings("serial")
 public class UserDetailsImpl implements UserDetails {
@@ -22,7 +23,7 @@ public class UserDetailsImpl implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> autoridades = new ArrayList<>();
-		for (Perfil perfil : usuario.getPerfis()) {
+		for (PerfilAcesso perfil : usuario.getPerfisAcesso()) {
 			autoridades.add(new SimpleGrantedAuthority(perfil.name()));
 		}
 		return autoridades;
@@ -30,12 +31,20 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return usuario.getCredencial().getSenha();
+		return usuario.getCredenciais().stream()
+				.filter(c -> c instanceof CredencialUsuarioSenha)
+				.map(c -> ((CredencialUsuarioSenha) c).getSenha())
+				.findFirst()
+				.orElse(null);
 	}
 
 	@Override
 	public String getUsername() {
-		return usuario.getCredencial().getNomeUsuario();
+		return usuario.getCredenciais().stream()
+				.filter(c -> c instanceof CredencialUsuarioSenha)
+				.map(c -> ((CredencialUsuarioSenha) c).getNomeUsuario())
+				.findFirst()
+				.orElse(null);
 	}
 
 	@Override
@@ -55,6 +64,10 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return usuario.getCredenciais().stream()
+				.filter(c -> c instanceof CredencialUsuarioSenha)
+				.map(c -> !c.isInativo())
+				.findFirst()
+				.orElse(false);
 	}
 }
