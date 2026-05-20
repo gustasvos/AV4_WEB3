@@ -61,6 +61,27 @@ Exemplo para as rotas do Cliente:
 }
 ```
 
+```json
+{
+  "nomeUsuario": "gerente",
+  "senha": "123456"
+}
+```
+
+```json
+{
+  "nomeUsuario": "vendedor",
+  "senha": "123456"
+}
+```
+
+```json
+{
+  "nomeUsuario": "cliente",
+  "senha": "123456"
+}
+```
+
 `POST /usuarios/{id}/credenciais`
 
 ```json
