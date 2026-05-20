@@ -34,14 +34,12 @@ public class VeiculoServico {
                     return ResponseEntity.ok(veiculo);
                 })
                 .orElse(ResponseEntity.notFound().build());
-//
     }
 
     public ResponseEntity<List<Veiculo>> obterVeiculos() {
         List<Veiculo> veiculos = repositorio.findAll();
         adicionadorLink.adicionarLink(veiculos);
         return ResponseEntity.ok(veiculos);
-//        
     }
 
     public ResponseEntity<Veiculo> cadastrarVeiculo(VeiculoDTO dto) {
@@ -91,13 +89,4 @@ public class VeiculoServico {
                 .orElseGet(() -> ResponseEntity.<Void>notFound().build());
     }
 
-//    private VeiculoResponseDTO toResponseDTO(Veiculo veiculo) {
-//        return new VeiculoResponseDTO(
-//                veiculo.getId(),
-//                veiculo.getTipo(),
-//                veiculo.getModelo(),
-//                veiculo.getPlaca(),
-//                veiculo.getProprietario() != null ? veiculo.getProprietario().getId() : null
-//        );
-//    }
 }

@@ -32,14 +32,12 @@ public class MercadoriaServico {
                     return ResponseEntity.ok(mercadoria);
                 })
                 .orElse(ResponseEntity.notFound().build());
-//
     }
 
     public ResponseEntity<List<Mercadoria>> obterMercadorias() {
         List<Mercadoria> mercadorias = repositorio.findAll();
         adicionadorLinkMercadoria.adicionarLink(mercadorias);
         return ResponseEntity.ok(mercadorias);
-//        
     }
 
     public ResponseEntity<Mercadoria> cadastrarMercadoria(MercadoriaDTO dto) {

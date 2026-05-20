@@ -21,13 +21,11 @@ public class TelefoneControle {
     @GetMapping("/{id}")
     public ResponseEntity<Telefone> obterTelefone(@PathVariable long id) {
         return servico.obterTelefone(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Telefone>> obterTelefones() {
         return servico.obterTelefones();
-//
     }
 
     @PostMapping

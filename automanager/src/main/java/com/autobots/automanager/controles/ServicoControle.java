@@ -20,13 +20,11 @@ public class ServicoControle {
     @GetMapping("/{id}")
     public ResponseEntity<Servico> obterServico(@PathVariable long id) {
         return servico.obterServico(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Servico>> obterServicos() {
         return servico.obterServicos();
-//
     }
 
     @PostMapping

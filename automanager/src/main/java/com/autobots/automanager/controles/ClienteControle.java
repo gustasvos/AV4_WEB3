@@ -21,13 +21,11 @@ public class ClienteControle {
 	@GetMapping("/{id}")
 	public ResponseEntity<Cliente> obterCliente(@PathVariable long id) {
 		return servico.obterCliente(id);
-//
 	}
 
 	@GetMapping
 	public ResponseEntity<List<Cliente>> obterClientes() {
 		return servico.obterClientes();
-//
 	}
 
 	@PostMapping
@@ -45,5 +43,6 @@ public class ClienteControle {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> excluirCliente(@PathVariable long id) {
 		return servico.excluirCliente(id);
+//
 	}
 }

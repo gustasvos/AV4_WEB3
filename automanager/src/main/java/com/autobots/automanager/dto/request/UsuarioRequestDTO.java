@@ -4,6 +4,7 @@ import com.autobots.automanager.dto.DocumentoDTO;
 import com.autobots.automanager.dto.EmailDTO;
 import com.autobots.automanager.dto.EnderecoDTO;
 import com.autobots.automanager.dto.TelefoneDTO;
+import com.autobots.automanager.enumeracoes.PerfilAcesso;
 import com.autobots.automanager.enumeracoes.PerfilUsuario;
 
 import javax.validation.Valid;
@@ -23,8 +24,10 @@ public record UsuarioRequestDTO(
         @Size(max = 150, message = "Nome social deve ter no máximo 150 caracteres")
         String nomeSocial,
 
-        @NotEmpty(message = "Informe ao menos um perfil")
+        @NotEmpty(message = "Informe ao menos um perfil de usuário")
         Set<PerfilUsuario> perfis,
+
+        Set<PerfilAcesso> perfisAcesso,
 
         @Valid
         EnderecoDTO endereco,

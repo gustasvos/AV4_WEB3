@@ -20,13 +20,11 @@ public class EnderecoControle {
     @GetMapping("/{id}")
     public ResponseEntity<Endereco> obterEndereco(@PathVariable long id) {
         return servico.obterEndereco(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Endereco>> obterEnderecos() {
         return servico.obterEnderecos();
-//
     }
 
     @PostMapping

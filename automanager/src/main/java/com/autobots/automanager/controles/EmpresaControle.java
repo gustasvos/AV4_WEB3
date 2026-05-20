@@ -22,13 +22,11 @@ public class EmpresaControle {
     @GetMapping("/{id}")
     public ResponseEntity<Empresa> obterEmpresa(@PathVariable long id) {
         return servico.obterEmpresa(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Empresa>> obterEmpresas() {
         return servico.obterEmpresas();
-//        
     }
 
     @PostMapping
@@ -46,6 +44,7 @@ public class EmpresaControle {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> excluirEmpresa(@PathVariable long id) {
         return servico.excluirEmpresa(id);
+//
     }
 
     // usuarios
@@ -61,6 +60,7 @@ public class EmpresaControle {
             @PathVariable long id,
             @PathVariable long usuarioId) {
         return servico.desassociarUsuario(id, usuarioId);
+//
     }
 
     // mercadorias
@@ -76,6 +76,7 @@ public class EmpresaControle {
             @PathVariable long id,
             @PathVariable long mercadoriaId) {
         return servico.desassociarMercadoria(id, mercadoriaId);
+//
     }
 
     // servicos
@@ -91,6 +92,7 @@ public class EmpresaControle {
             @PathVariable long id,
             @PathVariable long servicoId) {
         return servico.desassociarServico(id, servicoId);
+//
     }
 
     // vendas
@@ -106,6 +108,7 @@ public class EmpresaControle {
             @PathVariable long id,
             @PathVariable long vendaId) {
         return servico.desassociarVenda(id, vendaId);
+//
     }
 
     // telefones
@@ -121,6 +124,7 @@ public class EmpresaControle {
             @PathVariable long id,
             @PathVariable long telefoneId) {
         return servico.excluirTelefone(id, telefoneId);
+//
     }
 
     // endereco

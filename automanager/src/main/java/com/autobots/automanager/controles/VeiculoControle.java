@@ -20,13 +20,11 @@ public class VeiculoControle {
     @GetMapping("/{id}")
     public ResponseEntity<Veiculo> obterVeiculo(@PathVariable long id) {
         return servico.obterVeiculo(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Veiculo>> obterVeiculos() {
         return servico.obterVeiculos();
-//        
     }
 
     @PostMapping
@@ -44,5 +42,6 @@ public class VeiculoControle {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> excluirVeiculo(@PathVariable long id) {
         return servico.excluirVeiculo(id);
+//
     }
 }

@@ -17,6 +17,15 @@ Os dados serão salvos temporariamente no banco em memória H2.
 
 Foi implementado um login que gera um token JWT e atualmente os endpoints possuem níveis de acesso, portanto é necessário gerar um token e passar via Bearer Token para utilizar a API.
 
+Os níveis de acesso são:
+
+```yml
+Administrador: Autorização para fazer todas as operações de CRUD na aplicação, incluindo adicionar ou remover usuários administradores.
+Gerente: Autorização para fazer todas as operações de CRUD sobre usuários dos perfis gerente, vendedor e cliente. Autorização para fazer todas as operações de CRUD sobre serviços, vendas e mercadorias.
+Vendedor: Autorização para fazer todas as operações de CRUD sobre usuários do perfil cliente. Autorização para ler informações sobre serviços e mercadorias. Autorização para criar vendas feitas por si mesmo e ler suas informações.
+Cliente: Autorização para ler informações sobre o seu próprio cadastro. Autorização para ler informações de vendas das quais o usuário foi consumidor.
+```
+
 ## Endpoints
 
 A aplicação possui as entidades: Cliente, Documento, Endereço e Telefone, Empresa, Email, Mercadoria, Servico, 

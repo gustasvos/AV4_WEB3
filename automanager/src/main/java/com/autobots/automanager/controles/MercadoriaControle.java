@@ -20,13 +20,11 @@ public class MercadoriaControle {
     @GetMapping("/{id}")
     public ResponseEntity<Mercadoria> obterMercadoria(@PathVariable long id) {
         return servico.obterMercadoria(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Mercadoria>> obterMercadorias() {
         return servico.obterMercadorias();
-//
     }
 
     @PostMapping

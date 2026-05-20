@@ -31,14 +31,12 @@ public class EmailServico {
                     return ResponseEntity.ok(email);
                 })
                 .orElse(ResponseEntity.notFound().build());
-//
     }
 
     public ResponseEntity<List<Email>> obterEmails() {
         List<Email> emails = repositorio.findAll();
         adicionadorLinkEmail.adicionarLink(emails);
         return ResponseEntity.ok(emails);
-//        
     }
 
     public ResponseEntity<Email> cadastrarEmail(EmailDTO dto) {

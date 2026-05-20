@@ -21,15 +21,13 @@ public class UsuarioControle {
     private UsuarioServico servico;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> obterUsuario(@PathVariable long id) {
+    public ResponseEntity<?> obterUsuario(@PathVariable long id) {
         return servico.obterUsuario(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Usuario>> obterUsuarios() {
         return servico.obterUsuarios();
-//
     }
 
     @PostMapping
@@ -38,7 +36,7 @@ public class UsuarioControle {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(
+    public ResponseEntity<?> atualizarUsuario(
             @PathVariable long id,
             @RequestBody @Valid UsuarioRequestDTO dto) {
         return servico.atualizarUsuario(id, dto);
@@ -47,11 +45,12 @@ public class UsuarioControle {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> excluirUsuario(@PathVariable long id) {
         return servico.excluirUsuario(id);
+//
     }
 
     // credenciais
     @PostMapping("/{id}/credenciais")
-    public ResponseEntity<UsuarioResponseDTO> adicionarCredencial(
+    public ResponseEntity<?> adicionarCredencial(
             @PathVariable long id,
             @RequestBody @Valid CredencialRequestDTO dto) {
         return servico.adicionarCredencial(id, dto);
@@ -66,54 +65,58 @@ public class UsuarioControle {
     }
 
     @DeleteMapping("/{id}/credenciais/{credencialId}")
-    public ResponseEntity<Object> excluirCredencial(
+    public ResponseEntity<?> excluirCredencial(
             @PathVariable long id,
             @PathVariable long credencialId) {
         return servico.excluirCredencial(id, credencialId);
+//
     }
 
     // emails
     @PostMapping("/{id}/emails")
-    public ResponseEntity<UsuarioResponseDTO> adicionarEmail(
+    public ResponseEntity<?> adicionarEmail(
             @PathVariable long id,
             @RequestBody @Valid EmailDTO dto) {
         return servico.adicionarEmail(id, dto);
     }
 
     @DeleteMapping("/{id}/emails/{emailId}")
-    public ResponseEntity<Object> excluirEmail(
+    public ResponseEntity<?> excluirEmail(
             @PathVariable long id,
             @PathVariable long emailId) {
         return servico.excluirEmail(id, emailId);
+//
     }
 
     // telefones
     @PostMapping("/{id}/telefones")
-    public ResponseEntity<UsuarioResponseDTO> adicionarTelefone(
+    public ResponseEntity<?> adicionarTelefone(
             @PathVariable long id,
             @RequestBody @Valid TelefoneDTO dto) {
         return servico.adicionarTelefone(id, dto);
     }
 
     @DeleteMapping("/{id}/telefones/{telefoneId}")
-    public ResponseEntity<Object> excluirTelefone(
+    public ResponseEntity<?> excluirTelefone(
             @PathVariable long id,
             @PathVariable long telefoneId) {
         return servico.excluirTelefone(id, telefoneId);
+//
     }
 
     // documentos
     @PostMapping("/{id}/documentos")
-    public ResponseEntity<UsuarioResponseDTO> adicionarDocumento(
+    public ResponseEntity<?> adicionarDocumento(
             @PathVariable long id,
             @RequestBody @Valid DocumentoDTO dto) {
         return servico.adicionarDocumento(id, dto);
     }
 
     @DeleteMapping("/{id}/documentos/{documentoId}")
-    public ResponseEntity<Object> excluirDocumento(
+    public ResponseEntity<?> excluirDocumento(
             @PathVariable long id,
             @PathVariable long documentoId) {
         return servico.excluirDocumento(id, documentoId);
+//
     }
 }

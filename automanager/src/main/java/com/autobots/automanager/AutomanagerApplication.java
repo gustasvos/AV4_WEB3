@@ -259,12 +259,20 @@ public class AutomanagerApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		BCryptPasswordEncoder codificador = new BCryptPasswordEncoder();
+
+		criarUsuario("administrador", "admin", PerfilAcesso.ROLE_ADMIN, codificador);
+		criarUsuario("gerente", "gerente", PerfilAcesso.ROLE_GERENTE, codificador);
+		criarUsuario("vendedor", "vendedor", PerfilAcesso.ROLE_VENDEDOR, codificador);
+		criarUsuario("cliente", "cliente", PerfilAcesso.ROLE_CLIENTE, codificador);
+	}
+
+	private void criarUsuario(String nome, String nomeUsuario, PerfilAcesso perfil, BCryptPasswordEncoder codificador) {
 		Usuario usuario = new Usuario();
-		usuario.setNome("administrador");
-		usuario.getPerfisAcesso().add(PerfilAcesso.ROLE_ADMIN);
+		usuario.setNome(nome);
+		usuario.getPerfisAcesso().add(perfil);
 
 		CredencialUsuarioSenha credencial = new CredencialUsuarioSenha();
-		credencial.setNomeUsuario("admin");
+		credencial.setNomeUsuario(nomeUsuario);
 		credencial.setSenha(codificador.encode("123456"));
 		credencial.setCriacao(LocalDateTime.now());
 		credencial.setInativo(false);

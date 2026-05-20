@@ -20,13 +20,11 @@ public class DocumentoControle {
     @GetMapping("/{id}")
     public ResponseEntity<Documento> obterDocumento(@PathVariable long id) {
         return servico.obterDocumento(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Documento>> obterDocumentos() {
         return servico.obterDocumentos();
-//        
     }
 
     @PostMapping

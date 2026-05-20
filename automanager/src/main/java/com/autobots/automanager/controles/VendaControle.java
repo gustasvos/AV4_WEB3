@@ -18,24 +18,22 @@ public class VendaControle {
     private VendaServico servico;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Venda> obterVenda(@PathVariable long id) {
+    public ResponseEntity<?> obterVenda(@PathVariable long id) {
         return servico.obterVenda(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Venda>> obterVendas() {
         return servico.obterVendas();
-//        
     }
 
     @PostMapping
-    public ResponseEntity<Venda> cadastrarVenda(@RequestBody @Valid VendaDTO dto) {
+    public ResponseEntity<?> cadastrarVenda(@RequestBody @Valid VendaDTO dto) {
         return servico.cadastrarVenda(dto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Venda> atualizarVenda(
+    public ResponseEntity<?> atualizarVenda(
             @PathVariable long id,
             @RequestBody @Valid VendaDTO dto) {
         return servico.atualizarVenda(id, dto);
@@ -44,5 +42,6 @@ public class VendaControle {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> excluirVenda(@PathVariable long id) {
         return servico.excluirVenda(id);
+//
     }
 }

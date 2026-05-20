@@ -31,14 +31,12 @@ public class EnderecoServico {
                     return ResponseEntity.ok(endereco);
                 })
                 .orElse(ResponseEntity.notFound().build());
-//
     }
 
     public ResponseEntity<List<Endereco>> obterEnderecos() {
         List<Endereco> enderecos = repositorio.findAll();
         adicionadorLinkEndereco.adicionarLink(enderecos);
         return ResponseEntity.ok(enderecos);
-//        
     }
 
     public ResponseEntity<Endereco> cadastrarEndereco(EnderecoDTO dto) {

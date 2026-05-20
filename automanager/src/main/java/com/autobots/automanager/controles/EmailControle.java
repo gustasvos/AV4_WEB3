@@ -20,13 +20,11 @@ public class EmailControle {
     @GetMapping("/{id}")
     public ResponseEntity<Email> obterEmail(@PathVariable long id) {
         return servico.obterEmail(id);
-//
     }
 
     @GetMapping
     public ResponseEntity<List<Email>> obterEmails() {
         return servico.obterEmails();
-//
     }
 
     @PostMapping

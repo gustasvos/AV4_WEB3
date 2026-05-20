@@ -10,12 +10,15 @@ import com.autobots.automanager.dto.request.UsuarioRequestDTO;
 import com.autobots.automanager.dto.response.CredencialResponseDTO;
 import com.autobots.automanager.dto.response.UsuarioResponseDTO;
 import com.autobots.automanager.entidades.*;
+import com.autobots.automanager.enumeracoes.PerfilAcesso;
 import com.autobots.automanager.modelos.adicionador.AdicionadorLinkUsuario;
 import com.autobots.automanager.modelos.atualizador.UsuarioAtualizador;
 import com.autobots.automanager.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,29 +39,58 @@ public class UsuarioServico {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    public ResponseEntity<Usuario> obterUsuario(long id) {
+    public ResponseEntity<?> obterUsuario(long id) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
-                .map(usuario -> {
-                    adicionadorLink.adicionarLink(usuario);
-                    return ResponseEntity.ok(usuario);
+                .map(alvo -> {
+                    if (!isAdmin(autenticado) && !isGerente(autenticado)
+                            && !isVendedor(autenticado)
+                            && !autenticado.getId().equals(alvo.getId())) {
+                        return ResponseEntity.<Usuario>status(HttpStatus.FORBIDDEN).build();
+                    }
+                    adicionadorLink.adicionarLink(alvo);
+                    return ResponseEntity.ok(alvo);
                 })
                 .orElse(ResponseEntity.notFound().build());
-//
     }
 
     public ResponseEntity<List<Usuario>> obterUsuarios() {
-        List<Usuario> usuarios = repositorio.findAll();
-        adicionadorLink.adicionarLink(usuarios);
-        return ResponseEntity.ok(usuarios);
-//        
+        Usuario autenticado = obterAutenticado();
+        List<Usuario> todos = repositorio.findAll();
+
+        if (!isAdmin(autenticado) && !isGerente(autenticado) && !isVendedor(autenticado)) {
+            todos = todos.stream()
+                    .filter(u -> u.getId().equals(autenticado.getId()))
+                    .toList();
+        }
+
+        adicionadorLink.adicionarLink(todos);
+        return ResponseEntity.ok(todos);
     }
 
     public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(UsuarioRequestDTO dto) {
+        Usuario autenticado = obterAutenticado();
+
+        if (isVendedor(autenticado) &&
+                dto.perfisAcesso() != null &&
+                !dto.perfisAcesso().stream().allMatch(p -> p == PerfilAcesso.ROLE_CLIENTE)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (isGerente(autenticado) &&
+                dto.perfisAcesso() != null &&
+                dto.perfisAcesso().stream().anyMatch(p ->
+                        p == PerfilAcesso.ROLE_ADMIN || p == PerfilAcesso.ROLE_GERENTE)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Usuario usuario = new Usuario();
         usuario.setNome(dto.nome());
         usuario.setNomeSocial(dto.nomeSocial());
         if (dto.perfis() != null) {
             usuario.setPerfis(dto.perfis());
+        }
+        if (dto.perfisAcesso() != null) {
+            usuario.setPerfisAcesso(dto.perfisAcesso());
         }
 
         Usuario salvo = repositorio.save(usuario);
@@ -73,11 +105,21 @@ public class UsuarioServico {
         return ResponseEntity.created(location).body(toResponseDTO(salvo));
     }
 
-    public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(long id, UsuarioRequestDTO dto) {
+    public ResponseEntity<?> atualizarUsuario(long id, UsuarioRequestDTO dto) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
-                .map(usuario -> {
-                    atualizador.atualizar(usuario, dto);
-                    Usuario salvo = repositorio.save(usuario);
+                .map(alvo -> {
+                    if (isVendedor(autenticado) &&
+                            !alvo.getPerfisAcesso().contains(PerfilAcesso.ROLE_CLIENTE)) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                    }
+                    if (isGerente(autenticado) &&
+                            (alvo.getPerfisAcesso().contains(PerfilAcesso.ROLE_ADMIN) ||
+                                    alvo.getPerfisAcesso().contains(PerfilAcesso.ROLE_GERENTE))) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                    }
+                    atualizador.atualizar(alvo, dto);
+                    Usuario salvo = repositorio.save(alvo);
                     adicionadorLink.adicionarLink(salvo);
                     return ResponseEntity.ok(toResponseDTO(salvo));
                 })
@@ -85,18 +127,32 @@ public class UsuarioServico {
     }
 
     public ResponseEntity<Object> excluirUsuario(long id) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
-                .map(usuario -> {
-                    repositorio.delete(usuario);
+                .map(alvo -> {
+                    if (isVendedor(autenticado) &&
+                            !alvo.getPerfisAcesso().contains(PerfilAcesso.ROLE_CLIENTE)) {
+                        return ResponseEntity.<Void>status(HttpStatus.FORBIDDEN).build();
+                    }
+                    if (isGerente(autenticado) &&
+                            (alvo.getPerfisAcesso().contains(PerfilAcesso.ROLE_ADMIN) ||
+                                    alvo.getPerfisAcesso().contains(PerfilAcesso.ROLE_GERENTE))) {
+                        return ResponseEntity.<Void>status(HttpStatus.FORBIDDEN).build();
+                    }
+                    repositorio.delete(alvo);
                     return ResponseEntity.<Void>noContent().build();
                 })
                 .orElseGet(() -> ResponseEntity.<Void>notFound().build());
     }
 
     // credenciais
-    public ResponseEntity<UsuarioResponseDTO> adicionarCredencial(long id, CredencialRequestDTO dto) {
+    public ResponseEntity<?> adicionarCredencial(long id, CredencialRequestDTO dto) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
                 .map(usuario -> {
+                    ResponseEntity<?> bloqueio = verificarPermissaoSubRota(autenticado, usuario);
+                    if (bloqueio != null) return bloqueio;
+
                     CredencialUsuarioSenha credencial = new CredencialUsuarioSenha();
                     credencial.setNomeUsuario(dto.nomeUsuario());
                     credencial.setSenha(encoder.encode(dto.senha()));
@@ -131,9 +187,12 @@ public class UsuarioServico {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    public ResponseEntity<Object> excluirCredencial(long id, long credencialId) {
+    public ResponseEntity<?> excluirCredencial(long id, long credencialId) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
                 .map(usuario -> {
+                    ResponseEntity<?> bloqueio = verificarPermissaoSubRota(autenticado, usuario);
+                    if (bloqueio != null) return bloqueio;
                     usuario.getCredenciais()
                             .removeIf(c -> c.getId().equals(credencialId));
                     repositorio.save(usuario);
@@ -143,9 +202,13 @@ public class UsuarioServico {
     }
 
     // emails
-    public ResponseEntity<UsuarioResponseDTO> adicionarEmail(long id, EmailDTO dto) {
+    public ResponseEntity<?> adicionarEmail(long id, EmailDTO dto) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
                 .map(usuario -> {
+                    ResponseEntity<?> bloqueio = verificarPermissaoSubRota(autenticado, usuario);
+                    if (bloqueio != null) return bloqueio;
+
                     Email email = new Email();
                     email.setEndereco(dto.endereco());
                     usuario.getEmails().add(email);
@@ -156,11 +219,14 @@ public class UsuarioServico {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    public ResponseEntity<Object> excluirEmail(long id, long emailId) {
+    public ResponseEntity<?> excluirEmail(long id, long emailId) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
                 .map(usuario -> {
-                    usuario.getEmails()
-                            .removeIf(e -> e.getId().equals(emailId));
+                    ResponseEntity<?> bloqueio = verificarPermissaoSubRota(autenticado, usuario);
+                    if (bloqueio != null) return bloqueio;
+
+                    usuario.getEmails().removeIf(e -> e.getId().equals(emailId));
                     repositorio.save(usuario);
                     return ResponseEntity.<Void>noContent().build();
                 })
@@ -168,9 +234,13 @@ public class UsuarioServico {
     }
 
     // telefones
-    public ResponseEntity<UsuarioResponseDTO> adicionarTelefone(long id, TelefoneDTO dto) {
+    public ResponseEntity<?> adicionarTelefone(long id, TelefoneDTO dto) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
                 .map(usuario -> {
+                    ResponseEntity<?> bloqueio = verificarPermissaoSubRota(autenticado, usuario);
+                    if (bloqueio != null) return bloqueio;
+
                     Telefone telefone = new Telefone();
                     telefone.setDdd(dto.ddd());
                     telefone.setNumero(dto.numero());
@@ -182,9 +252,13 @@ public class UsuarioServico {
                 .orElseGet(() -> ResponseEntity.<UsuarioResponseDTO>notFound().build());
     }
 
-    public ResponseEntity<Object> excluirTelefone(long id, long telefoneId) {
+    public ResponseEntity<?> excluirTelefone(long id, long telefoneId) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
                 .map(usuario -> {
+                    ResponseEntity<?> bloqueio = verificarPermissaoSubRota(autenticado, usuario);
+                    if (bloqueio != null) return bloqueio;
+
                     usuario.getTelefones()
                             .removeIf(t -> t.getId().equals(telefoneId));
                     repositorio.save(usuario);
@@ -194,9 +268,13 @@ public class UsuarioServico {
     }
 
     // documentos
-    public ResponseEntity<UsuarioResponseDTO> adicionarDocumento(long id, DocumentoDTO dto) {
+    public ResponseEntity<?> adicionarDocumento(long id, DocumentoDTO dto) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
                 .map(usuario -> {
+                    ResponseEntity<?> bloqueio = verificarPermissaoSubRota(autenticado, usuario);
+                    if (bloqueio != null) return bloqueio;
+
                     Documento documento = new Documento();
                     documento.setTipo(dto.tipo());
                     documento.setDataEmissao(dto.dataEmissao());
@@ -209,9 +287,12 @@ public class UsuarioServico {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    public ResponseEntity<Object> excluirDocumento(long id, long documentoId) {
+    public ResponseEntity<?> excluirDocumento(long id, long documentoId) {
+        Usuario autenticado = obterAutenticado();
         return repositorio.findById(id)
                 .map(usuario -> {
+                    ResponseEntity<?> bloqueio = verificarPermissaoSubRota(autenticado, usuario);
+                    if (bloqueio != null) return bloqueio;
                     usuario.getDocumentos()
                             .removeIf(d -> d.getId().equals(documentoId));
                     repositorio.save(usuario);
@@ -285,7 +366,37 @@ public class UsuarioServico {
         return dto;
     }
 
+    private ResponseEntity<?> verificarPermissaoSubRota(Usuario autenticado, Usuario alvo) {
+        if (!isAdmin(autenticado) && !isGerente(autenticado)
+                && !isVendedor(autenticado)
+                && !autenticado.getId().equals(alvo.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (isVendedor(autenticado) &&
+                !alvo.getPerfisAcesso().contains(PerfilAcesso.ROLE_CLIENTE)
+                && !autenticado.getId().equals(alvo.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return null; // null = permitido
+    }
+
     private Usuario obterPorNome(String nomeUsuario) {
         return repositorio.findByNomeUsuario(nomeUsuario).orElse(null);
+    }
+
+    private Usuario obterAutenticado() {
+        String nomeUsuario = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+        return repositorio.findByNomeUsuario(nomeUsuario).orElse(null);
+    }
+
+    private boolean isAdmin(Usuario u) {
+        return u.getPerfisAcesso().contains(PerfilAcesso.ROLE_ADMIN);
+    }
+    private boolean isGerente(Usuario u) {
+        return u.getPerfisAcesso().contains(PerfilAcesso.ROLE_GERENTE);
+    }
+    private boolean isVendedor(Usuario u) {
+        return u.getPerfisAcesso().contains(PerfilAcesso.ROLE_VENDEDOR);
     }
 }
